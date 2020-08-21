@@ -31,8 +31,9 @@ a review of the changes (if you are beginning with k8s).  Do
 *not* commit secrets to this repository (it's public)
 and use the sealed-secret mechanism described below.
 
-The changes in `git` should be reflected in the cluster within
-approximately a minute.
+The changes in `git` should be reflected in the cluster
+(in the `playground` namespace)
+within approximately a minute.
 
 Secret generation
 -----------------
@@ -44,7 +45,7 @@ sync'd to the cluster itself.
 To create a "sealed secret", run:
 
 ```
-echo $idtoken | kubectl create --namespace playgroundd secret generic SECRETNAME --dry-run --from-file=token=/dev/stdin -o json > ~/mysecret.json
+echo $idtoken | kubectl create --namespace playground secret generic SECRETNAME --dry-run --from-file=token=/dev/stdin -o json > ~/mysecret.json
 kubeseal -o yaml --cert tiger-cert.pem < ~/mysecret.json > manifests/production/mysecret.yaml
 ```
 
