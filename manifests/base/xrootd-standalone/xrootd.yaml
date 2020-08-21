@@ -53,9 +53,11 @@ spec:
   - port: 1094
     protocol: TCP
     targetPort: 1094
+    name: xrootd-unauth
   - port: 1095
     protocol: TCP
     targetPort: 1095
+    name: xrootd-auth
   selector:
     app: stash-origin
   sessionAffinity: None
