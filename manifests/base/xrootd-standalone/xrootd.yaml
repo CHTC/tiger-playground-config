@@ -62,13 +62,13 @@ spec:
   type: LoadBalancer
 ---
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
   name: xcache-pvc
 spec:
-  capacity:
-    storage: 5Gi
-  volumeMode: Filesystem
+  storageClassName: local-storage
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
+  resources:
+    requests:
+      storage: 5Gi
