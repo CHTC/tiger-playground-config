@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stash-origin
+  labels:
+    app: stash-origin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stash-origin
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: stash-origin
+    spec:
+      containers:
+      - image: opensciencegrid/stash-origin:fresh
+        imagePullPolicy: Always
+        name: stash-origin
+        ports:
+        - containerPort: 1095
+          protocol: TCP
+        - containerPort: 1094
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /xcache
+          name: xcache-pvc
+        env:
+        - name: XC_RESOURCENAME
+          value: "Tiger-playground"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      volumes:
+      - name: xcache-pvc
+        persistentVolumeClaim:
+          claimName: xcache-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stash-origin
+  labels:
+    app: stash-origin
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 1094
+    protocol: TCP
+    targetPort: 1094
+  - port: 1095
+    protocol: TCP
+    targetPort: 1095
+  selector:
+    app: stash-origin
+  sessionAffinity: None
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: xcache-pvc
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain

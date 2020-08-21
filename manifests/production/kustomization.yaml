@@ -1,0 +1,5 @@
+
+namespace: playground
+
+bases:
+  - ../base/xrootd-standalone
